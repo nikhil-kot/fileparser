@@ -1,0 +1,63 @@
+#!/bin/bash
+
+filename=".KS_Dir"
+start_directory=$(pwd)
+measurement=
+sum=0
+
+if [ $# = 1 ]
+then
+	measurement=$1
+
+elif [ $# = 2 ]
+then
+	start_directory=$1
+	measurement=$2
+
+elif [ $# = 3 ]
+then
+	filename=$2
+	measurement=$3
+
+elif [ $# = 4 ]
+then
+	filename=$2
+	start_directory=$3
+	measurement=$4
+
+elif [ $# -gt 4 ]
+then
+	echo "Incorrect amount of arguments"
+	exit 1
+fi
+
+
+        
+
+function magic(){
+	animal_file="$1/$filename"
+   if [ -e "$animal_file" ]
+   then
+		animal_num=$( grep "$measurement" "$animal_file" | awk '{print $2}')
+            # add it to the sum
+      sum=$(($animal_num + $sum))
+   fi
+	for item in "$1"/*
+	do	 
+		if [ -d $item ]
+      then
+			magic $item
+      fi
+	done
+   
+}
+
+magic $start_directory
+if (( $sum!=0 ))
+then
+	echo "$measurement $sum"
+elif (( $sum==0 ))
+then
+	echo "$measurement does not exist"
+	exit 1
+fi
